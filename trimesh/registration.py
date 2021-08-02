@@ -152,7 +152,7 @@ def mesh_other(mesh,
         costs[i] = cost
 
     # run a final ICP refinement step
-    matrix, junk, cost = icp(a=points,
+    matrix, junk, cost, max_cost = icp(a=points,
                              b=search,
                              initial=transforms[np.argmin(costs)],
                              max_iterations=int(icp_final),
@@ -169,7 +169,7 @@ def mesh_other(mesh,
     else:
         mesh_to_other = matrix
 
-    return mesh_to_other, cost
+    return mesh_to_other, cost, max_cost
 
 
 def procrustes(a,
@@ -253,7 +253,8 @@ def procrustes(a,
     if return_cost:
         transformed = transform_points(a, matrix)
         cost = ((b - transformed)**2).mean()
-        return matrix, transformed, cost
+        max_cost = ((b - transformed)**2).max()
+        return matrix, transformed, cost, max_cost
     else:
         return matrix
 
@@ -324,7 +325,7 @@ def icp(a,
             closest = b[ix]
 
         # align a with closest points
-        matrix, transformed, cost = procrustes(a=a,
+        matrix, transformed, cost, max_cost = procrustes(a=a,
                                                b=closest,
                                                **kwargs)
 
@@ -337,4 +338,4 @@ def icp(a,
         else:
             old_cost = cost
 
-    return total_matrix, transformed, cost
+    return total_matrix, transformed, cost, max_cost
