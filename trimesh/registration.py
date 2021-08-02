@@ -141,7 +141,7 @@ def mesh_other(mesh,
             np.linalg.inv(search_to_points))
 
         # run first pass ICP
-        matrix, junk, cost = icp(a=points,
+        matrix, junk, cost, max_cost = icp(a=points,
                                  b=search,
                                  initial=a_to_b,
                                  max_iterations=int(icp_first),
